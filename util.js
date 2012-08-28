@@ -1,6 +1,7 @@
 /**
  * 通用组件
  * 基于Nodejs V0.8+
+ * @update
  */
 
 var fs = require('fs'),
@@ -14,9 +15,9 @@ var RED_COLOR = "\033[31m",
 
 
 /**
- * @description: 判断一个给定路径是否是一个目录（注明：软链的路径对应为一个目录时也返回true）
- * @param: {String} pathname 文件完整目录 如：/home/yansong/workspace/git/rest
- * @return {Boolean}
+ * @description 判断一个给定路径是否是一个目录（注明：软链的路径对应为一个目录时也返回true）
+ * @param {String} pathname 文件完整目录 如：/home/yansong/workspace/git/rest
+ * @return {String | Boolean}
  */
 var isDirectory = exports.isDirectory = function(pathname) {
     if (pathname && fs.existsSync(pathname)) {
@@ -26,13 +27,13 @@ var isDirectory = exports.isDirectory = function(pathname) {
 };
 
 /**
- * @description:根据给定的路径，查找是否存在给定文件夹
- * @param: {String} pathname 文件完整目录 如：/home/yansong/workspace/git/rest
- * @param: {String} dirname 文件夹名
- * @param: {String} <option> direction 查找方向 up | down，默认是全部
+ * @description 根据给定的路径，查找是否存在给定文件夹
+ * @param {String} pathname 文件完整目录 如：/home/yansong/workspace/git/rest
+ * @param {String} dirname 文件夹名
+ * @param {String} <option> direction 查找方向 up | down，默认是全部
  * @return {String | Boolean}
  */
-var findDiretory = exports.findDirectory = function(pathname, dirname, direction) {
+var findDirectory = exports.findDirectory = function(pathname, dirname, direction) {
     if (pathname && isDirectory(pathname)) {
         if (direction === undefined) {
             return findUp(pathname, dirname) || findDown(pathname, dirname);
@@ -70,8 +71,8 @@ var findDiretory = exports.findDirectory = function(pathname, dirname, direction
 };
 
 /**
- * @description: 展现给出特殊类型，或者说带颜色的信息
- * @param {Number|String} type 类型，当为Number时，有错误，正确以及提示信息。当为String时，默认为自己指定颜色
+ * @description 展现给出特殊类型，或者说带颜色的信息
+ * @param {Number|String} type 类型，当为Number时，为错误，正确以及提示三种信息。当为String时，默认为自己指定颜色
  * @param {Array} msg 信息
  * @param {String} <option> method 输出方式: log, info, error
  * @return
@@ -98,7 +99,7 @@ var showMsg = exports.showMsg = function(type, msg, method) {
 }
 
 /**
- * @description:输出正确信息，可以传任意个字符串参数
+ * @description 输出正确信息，可以传任意个字符串参数
  * @param [{String}, {String}, ... ]
  * @return
  */
@@ -107,7 +108,7 @@ exports.log = function() {
 }
 
 /**
- * @description:输出错误信息，可以传任意个字符串参数
+ * @description 输出错误信息，可以传任意个字符串参数
  * @param [{String}, {String}, ... ]
  * @return
  */
@@ -116,7 +117,7 @@ exports.error = function() {
 };
 
 /**
- * @description:输出提示信息，可以传任意个字符串参数
+ * @description 输出提示信息，可以传任意个字符串参数
  * @param [{String}, {String}, ... ]
  * @return
  */
