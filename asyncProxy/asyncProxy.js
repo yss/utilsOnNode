@@ -10,27 +10,36 @@ var events =  require("events"),
  * @param {Function} callback
  */
 var AsyncProxy = module.exports = function(){
-    var len = arguments.length;
-
-    // 三个以上参数才符合我们的预期，也就是异步执行代码前提。
-    if (len < 3) {
-        console.log('至少需要三个参数，分别是：evt1, evt2, callback');
-        return;
-    }
+    // 继承event
     events.EventEmitter.call(this);
 
-    this.init([].slice.call(arguments, 0));
+    // 如果有参数的情况下，默认调用proxy方法
+    if (arguments.length) {
+        // this.proxy(Array.prototype.slice.call(arguments, 0));
+        this.proxy.apply(this, arguments);
+    }
 };
 
 //AsyncProxy.prototype = events.EventEmitter.prototype;
 // 采用nodejs里的官方例子写法
 util.inherits(AsyncProxy, events.EventEmitter);
 
-// 初始化函数
-AsyncProxy.prototype.init = function(args) {
-    var _this = this;
+// 事件代理
+// 参数配置同上
+AsyncProxy.prototype.proxy = function() {
+    var _this = this,
+        args = Array.prototype.slice(arguments, 0),
+        len = args.length;
+
+    // 三个以上参数才符合我们的预期，也就是异步执行代码前提。
+    if (len < 3) {
+        console.error('至少需要三个参数，分别是：evt1, evt2, callback');
+        return;
+    }
+
     this.callback = args.pop();
-    var len = args.length;
+    --len;
+
     this.args = new Array(len);
     this.len = len;
 
@@ -49,3 +58,24 @@ AsyncProxy.prototype.init = function(args) {
     });
 };
 
+// 
+AsyncProxy.prototype.wait = function(evtname, callback) {
+    var _this = this;
+    // set waitStack
+    if (!this.waitStack) {
+        this.waitStack = {};
+    }
+
+    if (this.waitStack.hasOwnProperty(evtname)) {
+        this.waitStack[evtname].push(callback);
+    } else {
+        this.waitStack[evtname] = [callback];
+        this.once(evtname, function(data) {
+            var callback, waitStack = _this.waitStack[evtname];
+            while(callback = waitStack.pop()) {
+                callback(data);
+            }
+            delete _this.waitStack[evtname];
+        });
+    }
+};
