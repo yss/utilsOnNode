@@ -15,7 +15,7 @@ var AsyncProxy = module.exports = function(){
 
     // 如果有参数的情况下，默认调用proxy方法
     if (arguments.length) {
-        // this.proxy(Array.prototype.slice.call(arguments, 0));
+        // this.proxy(Array.prototype.slice.call(arguments));
         this.proxy.apply(this, arguments);
     }
 };
@@ -28,7 +28,7 @@ util.inherits(AsyncProxy, events.EventEmitter);
 // 参数配置同上
 AsyncProxy.prototype.proxy = function() {
     var _this = this,
-        args = Array.prototype.slice(arguments, 0),
+        args = Array.prototype.slice.call(arguments),
         len = args.length;
 
     // 三个以上参数才符合我们的预期，也就是异步执行代码前提。
@@ -77,12 +77,13 @@ AsyncProxy.prototype.wait = function(evtname, callback) {
         this.waitStack[evtname] = [callback];
         this.once(evtname, function(data) {
             var callback,
-                waitStack = _this.waitStack[evtname];
+                waitStack = _this.waitStack[evtname],
+                isArguments = !!data.callee;
 
-            data = Array.prototype.slice(data, 0);
+            if (isArguments) data = Array.prototype.slice.call(data);
 
             while(callback = waitStack.pop()) {
-                callback.call(_this, data);
+                isArguments ? callback.apply(_this, data) : callback(data);
             }
             delete _this.waitStack[evtname];
         });

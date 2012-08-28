@@ -34,7 +34,11 @@ function testWait() {
             ready = false;
             setTimeout(function(){
                 // ap.emit('test', arguments);
-                ap.emit('test', [Math.random()*10, 'two parameters']);
+                function a() {
+                    ap.emit('test', arguments);
+                    console.log(arguments);
+                }
+                a(10,20);
                 ready = true;
             }, 100);
         }
@@ -51,7 +55,6 @@ function testWait() {
 
     runWaitTest();
 
-    setTimeout(runWaitTest, 100);
 }
 
 testWait();
