@@ -33,7 +33,8 @@ function testWait() {
         if (ready) {
             ready = false;
             setTimeout(function(){
-                ap.emit('test', Math.random()*10);
+                // ap.emit('test', arguments);
+                ap.emit('test', [Math.random()*10, 'two parameters']);
                 ready = true;
             }, 100);
         }
@@ -42,8 +43,8 @@ function testWait() {
     function runWaitTest() {
         var arr = [1,2,3,4,5];
         arr.forEach(function(item) {
-            testWait(function(data) {
-                console.log(item, data);
+            testWait(function(data1, data2) {
+                console.log(item, data1, data2);
             })
         });
     }

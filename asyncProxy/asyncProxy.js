@@ -58,7 +58,12 @@ AsyncProxy.prototype.proxy = function() {
     });
 };
 
-// 
+/**
+ * 等待函数执行完后，统一调用只执行一次哦
+ * @param {String} evtname 事件名
+ * @param {Function} callback 回调函数
+ * @return
+ */
 AsyncProxy.prototype.wait = function(evtname, callback) {
     var _this = this;
     // set waitStack
@@ -71,9 +76,13 @@ AsyncProxy.prototype.wait = function(evtname, callback) {
     } else {
         this.waitStack[evtname] = [callback];
         this.once(evtname, function(data) {
-            var callback, waitStack = _this.waitStack[evtname];
+            var callback,
+                waitStack = _this.waitStack[evtname];
+
+            data = Array.prototype.slice(data, 0);
+
             while(callback = waitStack.pop()) {
-                callback(data);
+                callback.call(_this, data);
             }
             delete _this.waitStack[evtname];
         });
