@@ -147,12 +147,12 @@ var parseArgv = exports.parseArgv = function(args) {
         item = '' + args[i];
 
         if (0 === item.indexOf('--')) {// --a --a= --a=2
-            sp = item.substr(2).split('=');
+            sp = item.substring(2).split('=');
             if (sp[0]) {
                 o[sp[0]] = getRealValue(sp[1]);
             }
         } else if (0 === item.indexOf('-')) { // -a -a=2 -a 2
-            sp = item.substr(1).split('=');
+            sp = item.substring(1).split('=');
             if (sp[0]) {
                 // -a 2 -> {"a": 2}
                 // 首先是不存在sp[1], 然后是判断当前处理的参数不是最后一个参数
